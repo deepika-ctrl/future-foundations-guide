@@ -21,7 +21,7 @@ const Jobs = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [jobType, setJobType] = useState<string>('');
+  const [jobType, setJobType] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(true);
   const [applyingJobId, setApplyingJobId] = useState<string | null>(null);
   const { toast } = useToast();
@@ -62,7 +62,7 @@ const Jobs = () => {
     }
 
     // Apply job type filter
-    if (jobType) {
+    if (jobType && jobType !== 'all') {
       results = results.filter(job => job.type === jobType);
     }
 
@@ -135,7 +135,7 @@ const Jobs = () => {
                 <SelectValue placeholder="Job Type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Types</SelectItem>
+                <SelectItem value="all">All Types</SelectItem>
                 <SelectItem value="Full-time">Full-time</SelectItem>
                 <SelectItem value="Part-time">Part-time</SelectItem>
                 <SelectItem value="Contract">Contract</SelectItem>

@@ -21,7 +21,7 @@ const Courses = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [level, setLevel] = useState<string>('');
+  const [level, setLevel] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(true);
   const [enrollingCourseId, setEnrollingCourseId] = useState<string | null>(null);
   const { toast } = useToast();
@@ -61,7 +61,7 @@ const Courses = () => {
     }
 
     // Apply level filter
-    if (level) {
+    if (level && level !== 'all') {
       results = results.filter(course => course.level === level);
     }
 
@@ -143,7 +143,7 @@ const Courses = () => {
                 <SelectValue placeholder="Filter by level" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Levels</SelectItem>
+                <SelectItem value="all">All Levels</SelectItem>
                 <SelectItem value="Beginner">Beginner</SelectItem>
                 <SelectItem value="Intermediate">Intermediate</SelectItem>
                 <SelectItem value="Advanced">Advanced</SelectItem>
