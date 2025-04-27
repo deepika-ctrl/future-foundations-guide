@@ -14,7 +14,7 @@ import { Resource, resourceApi } from '@/services/api';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { Search, ExternalLink, FileText, Video, BookOpen, Tool } from 'lucide-react';
+import { Search, ExternalLink, FileText, Video, BookOpen, Wrench } from 'lucide-react';
 
 const Resources = () => {
   const [resources, setResources] = useState<Resource[]>([]);
@@ -81,7 +81,7 @@ const Resources = () => {
       case 'Ebook':
         return <BookOpen className="h-5 w-5" />;
       case 'Tool':
-        return <Tool className="h-5 w-5" />;
+        return <Wrench className="h-5 w-5" />; // Changed from Tool to Wrench
       default:
         return <FileText className="h-5 w-5" />;
     }
