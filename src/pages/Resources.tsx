@@ -20,7 +20,7 @@ const Resources = () => {
   const [resources, setResources] = useState<Resource[]>([]);
   const [filteredResources, setFilteredResources] = useState<Resource[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [resourceType, setResourceType] = useState<string>('');
+  const [resourceType, setResourceType] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
@@ -57,7 +57,7 @@ const Resources = () => {
     }
 
     // Apply resource type filter
-    if (resourceType) {
+    if (resourceType && resourceType !== 'all') {
       results = results.filter(resource => resource.type === resourceType);
     }
 
@@ -81,7 +81,7 @@ const Resources = () => {
       case 'Ebook':
         return <BookOpen className="h-5 w-5" />;
       case 'Tool':
-        return <Wrench className="h-5 w-5" />; // Changed from Tool to Wrench
+        return <Wrench className="h-5 w-5" />;
       default:
         return <FileText className="h-5 w-5" />;
     }
@@ -116,7 +116,7 @@ const Resources = () => {
                 <SelectValue placeholder="Resource Type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Types</SelectItem>
+                <SelectItem value="all">All Types</SelectItem>
                 <SelectItem value="Article">Articles</SelectItem>
                 <SelectItem value="Video">Videos</SelectItem>
                 <SelectItem value="Ebook">E-books</SelectItem>
