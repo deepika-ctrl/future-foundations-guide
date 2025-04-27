@@ -1,38 +1,26 @@
 
 import React, { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Job, jobApi } from '@/services/api';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { Search, MapPin, Clock, Building } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { JobCard } from '@/components/jobs/JobCard';
+import { JobFilters } from '@/components/jobs/JobFilters';
+import { useJobSearch } from '@/hooks/useJobSearch';
 
 const Jobs = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [jobType, setJobType] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(true);
   const [applyingJobId, setApplyingJobId] = useState<string | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
+  const { filteredJobs, searchTerm, setSearchTerm, jobType, setJobType } = useJobSearch(jobs);
 
   useEffect(() => {
     const fetchJobs = async () => {
       try {
         const data = await jobApi.getJobs();
         setJobs(data);
-        setFilteredJobs(data);
       } catch (error) {
         console.error('Error fetching jobs:', error);
         toast({
@@ -47,35 +35,6 @@ const Jobs = () => {
 
     fetchJobs();
   }, [toast]);
-
-  useEffect(() => {
-    let results = jobs;
-
-    // Apply search filter
-    if (searchTerm) {
-      results = results.filter(job =>
-        job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.description.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Apply job type filter
-    if (jobType && jobType !== 'all') {
-      results = results.filter(job => job.type === jobType);
-    }
-
-    setFilteredJobs(results);
-  }, [searchTerm, jobType, jobs]);
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleTypeChange = (value: string) => {
-    setJobType(value);
-  };
 
   const handleApply = async (jobId: string) => {
     if (!user) {
@@ -115,106 +74,24 @@ const Jobs = () => {
         </p>
       </div>
 
-      <div className="max-w-4xl mx-auto mb-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="md:col-span-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Search jobs by title, company, or location..."
-                value={searchTerm}
-                onChange={handleSearchChange}
-                className="pl-10"
-              />
-            </div>
-          </div>
-          <div>
-            <Select value={jobType} onValueChange={handleTypeChange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Job Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="Full-time">Full-time</SelectItem>
-                <SelectItem value="Part-time">Part-time</SelectItem>
-                <SelectItem value="Contract">Contract</SelectItem>
-                <SelectItem value="Remote">Remote</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
+      <JobFilters
+        searchTerm={searchTerm}
+        jobType={jobType}
+        onSearchChange={(e) => setSearchTerm(e.target.value)}
+        onTypeChange={setJobType}
+      />
 
       {isLoading ? (
         <LoadingSpinner />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredJobs.map((job) => (
-            <Card key={job.id} className="overflow-hidden card-hover">
-              <CardContent className="pt-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center">
-                      <img
-                        src={job.logo}
-                        alt={job.company}
-                        className="w-8 h-8 object-contain"
-                      />
-                    </div>
-                    <div>
-                      <h2 className="text-xl font-bold">{job.title}</h2>
-                      <div className="flex items-center text-gray-600 mt-1">
-                        <Building className="h-4 w-4 mr-1" />
-                        <span>{job.company}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <Badge
-                    variant={job.type === 'Remote' ? 'default' : 'outline'}
-                  >
-                    {job.type}
-                  </Badge>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="flex items-center text-gray-600">
-                    <MapPin className="h-4 w-4 mr-1" />
-                    <span>{job.location}</span>
-                    <span className="mx-2">•</span>
-                    <Clock className="h-4 w-4 mr-1" />
-                    <span>{job.posted}</span>
-                  </div>
-                  
-                  <p className="text-gray-600 line-clamp-3">{job.description}</p>
-                  
-                  <div>
-                    <p className="text-sm font-medium mb-2">Requirements:</p>
-                    <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-                      {job.requirements.slice(0, 2).map((req, index) => (
-                        <li key={index} className="line-clamp-1">{req}</li>
-                      ))}
-                      {job.requirements.length > 2 && (
-                        <li>...and {job.requirements.length - 2} more</li>
-                      )}
-                    </ul>
-                  </div>
-                  
-                  <div className="font-semibold">
-                    Salary: {job.salary}
-                  </div>
-                </div>
-              </CardContent>
-              <CardFooter className="bg-gray-50 border-t p-4">
-                <Button 
-                  onClick={() => handleApply(job.id)} 
-                  className="w-full"
-                  disabled={applyingJobId === job.id}
-                >
-                  {applyingJobId === job.id ? 'Applying...' : 'Apply Now'}
-                </Button>
-              </CardFooter>
-            </Card>
+            <JobCard
+              key={job.id}
+              job={job}
+              onApply={handleApply}
+              isApplying={applyingJobId === job.id}
+            />
           ))}
         </div>
       )}
