@@ -23,6 +23,7 @@ const Courses = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [level, setLevel] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
+  const [enrollingCourseId, setEnrollingCourseId] = useState<string | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
 
@@ -86,7 +87,12 @@ const Courses = () => {
     }
     
     try {
+      setEnrollingCourseId(courseId);
       await courseApi.enrollInCourse(courseId);
+      toast({
+        title: "Enrollment Successful!",
+        description: "You have been enrolled in the course.",
+      });
     } catch (error) {
       console.error('Error enrolling in course:', error);
       toast({
@@ -94,6 +100,8 @@ const Courses = () => {
         title: "Error",
         description: "Failed to enroll in the course. Please try again.",
       });
+    } finally {
+      setEnrollingCourseId(null);
     }
   };
 
@@ -193,8 +201,9 @@ const Courses = () => {
                 <Button 
                   onClick={() => handleEnroll(course.id)} 
                   className="w-full"
+                  disabled={enrollingCourseId === course.id}
                 >
-                  Enroll Now
+                  {enrollingCourseId === course.id ? 'Enrolling...' : 'Enroll Now'}
                 </Button>
               </CardFooter>
             </Card>

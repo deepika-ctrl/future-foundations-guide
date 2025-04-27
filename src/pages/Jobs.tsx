@@ -23,6 +23,7 @@ const Jobs = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [jobType, setJobType] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
+  const [applyingJobId, setApplyingJobId] = useState<string | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
 
@@ -87,7 +88,12 @@ const Jobs = () => {
     }
     
     try {
+      setApplyingJobId(jobId);
       await jobApi.applyForJob(jobId);
+      toast({
+        title: "Application Submitted!",
+        description: "Your job application has been submitted successfully.",
+      });
     } catch (error) {
       console.error('Error applying for job:', error);
       toast({
@@ -95,6 +101,8 @@ const Jobs = () => {
         title: "Error",
         description: "Failed to apply for the job. Please try again.",
       });
+    } finally {
+      setApplyingJobId(null);
     }
   };
 
@@ -201,8 +209,9 @@ const Jobs = () => {
                 <Button 
                   onClick={() => handleApply(job.id)} 
                   className="w-full"
+                  disabled={applyingJobId === job.id}
                 >
-                  Apply Now
+                  {applyingJobId === job.id ? 'Applying...' : 'Apply Now'}
                 </Button>
               </CardFooter>
             </Card>
