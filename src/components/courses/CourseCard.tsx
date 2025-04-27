@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { Course } from '@/services/api';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Star } from 'lucide-react';
+import { BookOpen, Star, ExternalLink } from 'lucide-react';
 
 interface CourseCardProps {
   course: Course;
@@ -20,6 +19,10 @@ export const CourseCard = ({ course, onEnroll, isEnrolling }: CourseCardProps) =
         className={`h-4 w-4 ${i < Math.round(rating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} 
       />
     ));
+  };
+
+  const handleLearnMore = () => {
+    window.open(`https://wikipedia.org/wiki/${encodeURIComponent(course.title.replace(/\s+/g, '_'))}`, '_blank');
   };
 
   return (
@@ -62,13 +65,21 @@ export const CourseCard = ({ course, onEnroll, isEnrolling }: CourseCardProps) =
           <span>{course.enrolled.toLocaleString()} students</span>
         </div>
       </CardContent>
-      <CardFooter className="bg-gray-50 border-t p-4">
+      <CardFooter className="bg-gray-50 border-t p-4 flex-col gap-2">
         <Button 
           onClick={() => onEnroll(course.id)} 
           className="w-full"
           disabled={isEnrolling}
         >
           {isEnrolling ? 'Enrolling...' : 'Enroll Now'}
+        </Button>
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={handleLearnMore}
+        >
+          Learn More
+          <ExternalLink className="ml-2 h-4 w-4" />
         </Button>
       </CardFooter>
     </Card>

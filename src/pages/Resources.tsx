@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { Input } from '@/components/ui/input';
@@ -15,6 +14,41 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Search, ExternalLink, FileText, Video, BookOpen, Wrench } from 'lucide-react';
+
+const resources: Resource[] = [
+  {
+    id: "res-1",
+    title: "Web Development Guide",
+    type: "Article",
+    description: "A comprehensive guide to becoming a web developer in 2024.",
+    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
+    link: "https://wikipedia.org/wiki/Web_development"
+  },
+  {
+    id: "res-2",
+    title: "Machine Learning Basics",
+    type: "Video",
+    description: "Learn the fundamentals of machine learning with this beginner-friendly guide.",
+    image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
+    link: "https://wikipedia.org/wiki/Machine_learning"
+  },
+  {
+    id: "res-3",
+    title: "UX Design Principles",
+    type: "Ebook",
+    description: "Master the principles of user experience design with this comprehensive guide.",
+    image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
+    link: "https://wikipedia.org/wiki/User_experience_design"
+  },
+  {
+    id: "res-4",
+    title: "Cybersecurity Essentials",
+    type: "Article",
+    description: "Essential security practices and guidelines for modern tech professionals.",
+    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+    link: "https://wikipedia.org/wiki/Computer_security"
+  }
+];
 
 const Resources = () => {
   const [resources, setResources] = useState<Resource[]>([]);
@@ -133,7 +167,7 @@ const Resources = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredResources.map((resource) => (
             <Card key={resource.id} className="overflow-hidden card-hover">
-              <div className="h-40 bg-gray-100 flex items-center justify-center">
+              <div className="h-48 bg-gray-100">
                 <img
                   src={resource.image}
                   alt={resource.title}
@@ -148,16 +182,18 @@ const Resources = () => {
                     <span>{resource.type}</span>
                   </Badge>
                 </div>
-                <p className="text-gray-600">{resource.description}</p>
+                <p className="text-gray-600 mb-4">{resource.description}</p>
               </CardContent>
               <CardFooter className="bg-gray-50 border-t p-4">
-                <Link 
-                  to={resource.link} 
-                  className="styled-link w-full flex items-center justify-center"
+                <a 
+                  href={resource.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-center text-blue-600 hover:text-blue-800 transition-colors"
                 >
-                  Access Resource
+                  Learn More
                   <ExternalLink className="ml-2 h-4 w-4" />
-                </Link>
+                </a>
               </CardFooter>
             </Card>
           ))}
